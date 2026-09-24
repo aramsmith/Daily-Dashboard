@@ -1,0 +1,8 @@
+# Build output and bundled engine (large binaries; build.ps1 recreates dist, stage and pkg)
+dist/
+stage/
+pkg/
+runtime-src/
+# Local user settings
+app/config.json
+config.json

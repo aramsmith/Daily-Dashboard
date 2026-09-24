@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Settings · Daily Board</title>
+  <link rel="icon" href="/icon.ico">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="brief-page">
+  <header class="topbar">
+    <div class="title">
+      <p class="eyebrow">Settings</p>
+      <h1 id="s-title">Daily Board</h1>
+      <p class="date">Your name and the customers you follow. Stored only on this computer.</p>
+    </div>
+    <div class="actions"><a class="btn" href="/">Back to the board</a></div>
+  </header>
+
+  <main>
+    <form class="panel settings-form" id="s-form" novalidate>
+      <div class="field">
+        <label for="s-name">Your name</label>
+        <input id="s-name" name="userName" maxlength="40" autocomplete="given-name" required>
+        <p class="hint">Shown in the title, for example "Alex's Daily Board".</p>
+      </div>
+      <fieldset class="field">
+        <legend>Customers (1 to 3)</legend>
+        <p class="hint">Each customer gets its own mail section in the colour you pick. The board searches your Inbox for this name, for example "Contoso".</p>
+        <div class="cust-row"><input id="s-c1" class="cust-name" maxlength="40" aria-label="Customer 1" placeholder="Customer 1 (required)"><fieldset class="swatches" id="s-k1" aria-label="Colour for customer 1"></fieldset></div>
+        <div class="cust-row"><input id="s-c2" class="cust-name" maxlength="40" aria-label="Customer 2" placeholder="Customer 2 (optional)"><fieldset class="swatches" id="s-k2" aria-label="Colour for customer 2"></fieldset></div>
+        <div class="cust-row"><input id="s-c3" class="cust-name" maxlength="40" aria-label="Customer 3" placeholder="Customer 3 (optional)"><fieldset class="swatches" id="s-k3" aria-label="Colour for customer 3"></fieldset></div>
+      </fieldset>
+      <p class="error" id="s-error" role="alert" hidden></p>
+      <div class="form-actions">
+        <button type="submit" class="btn primary" id="s-save">Save</button>
+        <a class="btn" href="/">Cancel</a>
+      </div>
+      <p class="settings-version" id="s-version"></p>
+    </form>
+  </main>
+
+  <script src="/settings.js"></script>
+</body>
+</html>

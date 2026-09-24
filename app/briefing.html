@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Pre-meeting briefing · Daily Board</title>
+  <link rel="icon" href="/icon.ico">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="brief-page">
+  <header class="topbar">
+    <div class="title">
+      <p class="eyebrow">Pre-meeting briefing</p>
+      <h1 id="b-title">Preparing briefing…</h1>
+      <p class="date" id="b-when">&nbsp;</p>
+    </div>
+    <div class="actions no-export">
+      <button type="button" class="btn" id="b-print" disabled>Print</button>
+      <button type="button" class="btn" id="b-regen" disabled>Regenerate</button>
+      <button type="button" class="btn primary" id="b-save" disabled>Save as HTML</button>
+    </div>
+  </header>
+
+  <main id="b-body">
+    <section class="panel brief-wait">
+      <div class="spinner" aria-hidden="true"></div>
+      <div>
+        <p class="wait-main" role="status">Microsoft 365 Copilot is reading your mail, Teams chats and meeting transcripts.</p>
+        <p class="muted-inline">This usually takes about one minute. <span id="b-elapsed" aria-hidden="true">0:00</span></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span id="b-foot">Generated live from Microsoft 365 with your own sign-in. Nothing is stored. Check facts before you share.</span>
+  </footer>
+
+  <script src="/briefing.js"></script>
+</body>
+</html>
