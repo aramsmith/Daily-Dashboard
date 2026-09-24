@@ -2,7 +2,7 @@
 
 **Your working day on one screen.** The Daily Board shows the mail that matters, your meetings for today and tomorrow, and it lets Microsoft 365 Copilot prepare you for each meeting. It runs on your own Windows PC and reads Microsoft 365 with your own sign-in. It stores nothing.
 
-**Download:** [DailyBoardSetup-1.1.0.exe](release/DailyBoardSetup-1.1.0.exe) (version 1.1.0, 27 MB, Windows 10 and 11) · [what's new](CHANGELOG.md)
+**Download:** [DailyBoardSetup-1.1.0.exe](https://github.com/aramsmith/Daily-Dashboard/releases/download/v1.1.0/DailyBoardSetup-1.1.0.exe) (version 1.1.0, 27 MB, Windows 10 and 11) · [what's new](CHANGELOG.md) · [all releases](https://github.com/aramsmith/Daily-Dashboard/releases)
 
 ![The Daily Board with sample data](docs/screenshots/board-dark.png)
 
@@ -89,7 +89,7 @@ The board reads your data through **[Microsoft Work IQ](https://learn.microsoft.
 If sign-in says that your account has not allowed the connector, admin consent or the billing assignment is missing. Ask your IT team.
 
 ### Install
-1. Download [DailyBoardSetup-1.1.0.exe](release/DailyBoardSetup-1.1.0.exe).
+1. Download [DailyBoardSetup-1.1.0.exe](https://github.com/aramsmith/Daily-Dashboard/releases/download/v1.1.0/DailyBoardSetup-1.1.0.exe).
 2. Double-click it. The setup is not signed yet, so Windows can show "Windows protected your PC". Click **More info**, then **Run anyway**.
 3. Enter your name and 1 to 3 customers, and pick a colour for each customer. Click **Install**.
 
@@ -156,7 +156,7 @@ The build packages only an approved list of app files. It runs a privacy check f
 1. Change the number in `VERSION` (MAJOR.MINOR.PATCH).
 2. Add a section to `CHANGELOG.md`.
 3. Run `.\build.ps1 -Release`. It puts `DailyBoardSetup-<version>.exe` in `release\` and adds its checksum to `release\SHA256SUMS.txt`.
-4. Update the download links in this README, and remove the setup file of the previous version from `release\`.
+4. Create a GitHub release `v<version>` with the setup file attached, update the download links in this README (they point to the release download), and remove the setup file of the previous version from `release\`.
 
 The board, the Settings page, the setup window and Windows Settings → Apps all show the number from `VERSION`.
 
