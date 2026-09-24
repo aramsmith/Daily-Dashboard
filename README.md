@@ -162,3 +162,15 @@ The board, the Settings page, the setup window and Windows Settings → Apps all
 
 ### Refresh the screenshots
 Run `node docs\demo\demo-server.js` and open http://127.0.0.1:12900/. The demo server shows the real pages with sample data only. It needs no sign-in and never touches Microsoft 365.
+
+---
+
+## License
+
+The Daily Board is open source under the **MIT License**: you may use, copy, change and share it, also commercially, as long as you keep the copyright notice. It comes without any warranty. See [LICENSE](LICENSE) for the full text, or read about the [MIT License at the Open Source Initiative](https://opensource.org/license/mit).
+
+The setup file also contains two parts with their own licence:
+- The [JetBrains Mono](https://www.jetbrains.com/lp/mono/) font, under the [SIL Open Font License 1.1](app/fonts/OFL.txt).
+- The [Node.js](https://nodejs.org/) engine, under the [Node.js license](https://github.com/nodejs/node/blob/main/LICENSE) (included in the setup as `runtime\NODE-LICENSE.txt`).
+
+Microsoft, Microsoft 365, Copilot, Outlook, Teams and Work IQ are trademarks of Microsoft. This is a personal project and not an official Microsoft product.
