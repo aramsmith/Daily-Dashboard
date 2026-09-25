@@ -8,6 +8,8 @@
 
 *All screenshots use made-up sample data (Contoso, Fabrikam and invented people).*
 
+> **New in 1.1.1:** the board keeps running while one of its pages is open, also in a background tab or after your PC wakes up from sleep. If it does stop, a **Start the board** button starts it again. See the [changelog](CHANGELOG.md).
+
 ---
 
 ## What the board does
@@ -114,7 +116,7 @@ Click the gear button on the board. Or run the setup again: it shows your curren
 Run the setup of the new version. It shows which version you have and which version it installs. It keeps your settings. If the update fails, your previous version comes back.
 
 ### Remove
-Windows **Settings → Apps → Installed apps → Daily Board → Uninstall**. This removes the board, its shortcuts and your settings. Your mail and calendar are not affected.
+Windows **Settings → Apps → Installed apps → Daily Board → Uninstall**. This removes the board, its shortcuts, the `dailyboard://` link and your settings. Your mail and calendar are not affected.
 
 ### Silent install (for IT)
 ```
@@ -125,10 +127,22 @@ DailyBoardSetup-1.1.1.exe /Q /C:"setup.cmd -Quiet -UserName Alex -Customers Cont
 - Exit code 0 means installed. Exit code 2 means the setup stopped; the reason is in `%TEMP%\DailyBoardSetup.log`. The setup checks the input with the same rules as the setup window and never installs different settings.
 - For customer names with spaces, extract first with `DailyBoardSetup-1.1.1.exe /Q /T:C:\Temp\DailyBoard /C`, then run `powershell -ExecutionPolicy Bypass -File C:\Temp\DailyBoard\install.ps1 -Quiet -UserName Alex -Customers "Contoso,Fabrikam Ltd"`.
 
+## Troubleshooting
+
+| You see | What to do |
+|---|---|
+| "The board service on this computer has stopped" | Click **Start the board**. The first time, your browser asks whether it may open Daily Board: allow it. Or open the board with the desktop shortcut. The board stops by itself when no board tab has been open for 30 minutes. |
+| "You are not signed in yet" after a restart | Click **Sign in**. The board keeps your sign-in only in memory, so you sign in again after each restart. |
+| "Your account has not allowed the Microsoft 365 connector" | Admin consent or Copilot Credits billing for Work IQ is missing. Ask your IT team (see [Prerequisites](#prerequisites)). |
+| "Windows protected your PC" when you start the setup | The setup is not signed yet. Click **More info**, then **Run anyway**. |
+| "Another program uses network port 12800" | Close that program or restart your PC, then open the board again. |
+| A customer section shows "+" and "There is more … mail" | That customer has more mail since yesterday than the board reads. Search Outlook for the rest. |
+
 ---
 
 ## Privacy and security in short
 - The board runs only on your PC (address 127.0.0.1) and accepts requests only from its own pages.
+- The setup registers a `dailyboard://` link for the **Start the board** button. It only starts the board's own launcher; nothing from the link is passed on. The uninstaller removes it.
 - Sign-in uses the standard Microsoft sign-in (OAuth with PKCE). The sign-in token stays in memory only; you sign in again after the board restarts.
 - Copilot gets the meeting details as data only, never as instructions. Source links are clickable only when they match Copilot's own reference list.
 - The setup package contains no personal or customer data. The build checks this before every release.
