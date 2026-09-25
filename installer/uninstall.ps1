@@ -32,6 +32,7 @@ function Invoke-Uninstall([scriptblock]$step) {
 
   & $report 65 'Removing the board from Windows Settings > Apps...'
   Remove-Item $UninstallKey -Recurse -Force
+  Remove-Item 'HKCU:\Software\Classes\dailyboard' -Recurse -Force
 
   & $report 85 'Removing the files and your settings...'
   Set-Location $env:TEMP

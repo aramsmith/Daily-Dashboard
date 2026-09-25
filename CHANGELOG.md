@@ -6,6 +6,14 @@ Versions use MAJOR.MINOR.PATCH. The number lives in the `VERSION` file only; the
 - MINOR: a new feature.
 - PATCH: fixes only.
 
+## 1.1.1 — 2026-09-25
+
+**Fixed**
+- The message "The board service on this computer is not running" appeared often. The service stopped after 30 minutes when the board tab was in the background, the screen was locked, or the PC woke up from sleep.
+  - Open board, briefing and draft pages now send a small keep-alive signal every 4 minutes, also from a background tab.
+  - The 30-minute stop counts only time that the PC is awake, so waking up from sleep no longer stops the board.
+  - If the service did stop, the message now has a **Start the board** button. It starts the service again through a `dailyboard://` link that the setup registers (the browser asks once for permission).
+
 ## 1.1.0 — 2026-09-24
 
 **New**

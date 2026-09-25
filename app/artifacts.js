@@ -90,9 +90,10 @@
     return out;
   }
 
-  function errorBody(message, signIn, retry) {
+  function errorBody(message, signIn, retry, offline) {
     const box = el('div', { class: 'error', role: 'alert' }, el('div', { text: message }));
     if (signIn) box.append(el('a', { class: 'btn primary', href: '/auth/login', target: '_blank', rel: 'noopener', text: 'Sign in' }));
+    else if (offline && window.BoardService) { const s = BoardService.startButton(retry); s.classList.add('no-export'); box.append(s); }
     else { const b = el('button', { type: 'button', class: 'btn no-export', text: 'Try again' }); b.addEventListener('click', retry); box.append(b); }
     return box;
   }
@@ -143,7 +144,7 @@
       const q = new URLSearchParams({ id: job.id, item: job.items[i], conv: job.conv || '', cap: job.cap || '' });
       let r;
       try { r = await fetch(`/api/artifact?${q}`, { headers: { 'X-Board': '1' }, cache: 'no-store' }); }
-      catch { throw Object.assign(new Error('The board service on this computer is not running. Open the board again from the desktop shortcut.'), { code: 'offline' }); }
+      catch { throw Object.assign(new Error(window.BoardService ? BoardService.OFFLINE_MESSAGE : 'The board service on this computer has stopped. Open the board again from the desktop shortcut.'), { code: 'offline' }); }
       const body = await r.json().catch(() => ({}));
       if (v !== card.version) return;
       if (!r.ok) throw Object.assign(new Error((body.error && body.error.message) || 'Copilot could not draft this artifact. Try again in a moment.'), { code: body.error && body.error.code });
@@ -151,7 +152,7 @@
       card.body.replaceChildren(renderDoc(body));
     } catch (err) {
       if (v !== card.version) return;
-      card.body.replaceChildren(errorBody(err.message, ['signin_required', 'signin_expired', 'consent_required'].includes(err.code), () => schedule(i)));
+      card.body.replaceChildren(errorBody(err.message, ['signin_required', 'signin_expired', 'consent_required'].includes(err.code), () => schedule(i), err.code === 'offline'));
     } finally {
       wait.stop();
       if (v === card.version) { card.regen.disabled = false; updateProgress(); }

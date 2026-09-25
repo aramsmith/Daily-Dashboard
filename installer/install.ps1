@@ -255,7 +255,7 @@ function Expand-NewVersion([string]$payload, [string]$staging) {
   if (Test-Path $staging) { Remove-Item $staging -Recurse -Force }
   New-Item -ItemType Directory -Force $staging | Out-Null
   Expand-Archive -Path $payload -DestinationPath $staging -Force
-  foreach ($f in 'runtime\node.exe', 'app\server.js', 'app\index.html', 'app\app.js', 'app\styles.css', 'app\launch.vbs', 'app\icon.ico') {
+  foreach ($f in 'runtime\node.exe', 'app\server.js', 'app\index.html', 'app\app.js', 'app\styles.css', 'app\launch.vbs', 'app\keepalive.js', 'app\icon.ico') {
     if (-not (Test-Path (Join-Path $staging $f))) { throw "The setup package is incomplete ($f is missing)." }
   }
 }
@@ -321,6 +321,17 @@ function Invoke-Install($answer, [scriptblock]$step) {
     Set-ItemProperty -Path $UninstallKey -Name NoModify -Value 1 -Type DWord
     Set-ItemProperty -Path $UninstallKey -Name NoRepair -Value 1 -Type DWord
     Set-ItemProperty -Path $UninstallKey -Name EstimatedSize -Value $sizeKb -Type DWord
+
+    # The dailyboard:// link lets the "Start the board" button on a board page start the engine again. It always runs the
+    # board's own launcher with the fixed /quiet option; nothing from the link itself is passed on.
+    $proto = 'HKCU:\Software\Classes\dailyboard'
+    $launchCmd = '"{0}" "{1}" /quiet' -f (Join-Path $env:SystemRoot 'System32\wscript.exe'), (Join-Path $Root 'app\launch.vbs')
+    New-Item -Path "$proto\shell\open\command" -Force | Out-Null
+    New-Item -Path "$proto\DefaultIcon" -Force | Out-Null
+    Set-ItemProperty -Path $proto -Name '(default)' -Value 'URL:Daily Board'
+    Set-ItemProperty -Path $proto -Name 'URL Protocol' -Value ''
+    Set-ItemProperty -Path "$proto\DefaultIcon" -Name '(default)' -Value ((Join-Path $Root 'app\icon.ico') + ',0')
+    Set-ItemProperty -Path "$proto\shell\open\command" -Name '(default)' -Value $launchCmd
   } catch {
     $failure = $_
     foreach ($sub in 'app', 'runtime') {

@@ -30,7 +30,7 @@ const CUSTOMER_COLORS = ['amber', 'blue', 'violet', 'pink', 'cyan', 'slate'];
 const IDLE_SHUTDOWN_MS = 30 * 60 * 1000;
 const ALLOWED_HOSTS = new Set([`127.0.0.1:${PORT}`, `localhost:${PORT}`]);
 const STATIC = {
-  '/': 'index.html', '/app.js': 'app.js', '/styles.css': 'styles.css', '/icon.ico': 'icon.ico',
+  '/': 'index.html', '/app.js': 'app.js', '/styles.css': 'styles.css', '/icon.ico': 'icon.ico', '/keepalive.js': 'keepalive.js',
   '/briefing': 'briefing.html', '/briefing.js': 'briefing.js',
   '/settings': 'settings.html', '/settings.js': 'settings.js',
   '/artifacts': 'artifacts.html', '/artifacts.js': 'artifacts.js',
@@ -988,7 +988,7 @@ async function buildArtifact(id, item, conv) {
 
 // ---------- HTTP server ----------
 
-let lastActivity = Date.now();
+let idleMinutes = 0; // minutes the service has been running without a request (sleep time does not count)
 
 function secHeaders(extra = {}) {
   return {
@@ -1039,12 +1039,13 @@ const server = http.createServer(async (req, res) => {
   const host = req.headers.host || '';
   if (!ALLOWED_HOSTS.has(host)) { res.writeHead(421); return res.end(); }
   const url = new URL(req.url, `http://${host}`);
-  lastActivity = Date.now();
+  idleMinutes = 0;
 
   if (url.pathname === '/health') return sendJson(res, 200, { app: APP_ID, version: APP_VERSION });
 
   if (url.pathname.startsWith('/api/')) {
     if (req.headers['x-board'] !== '1') { res.writeHead(403); return res.end(); }
+    if (url.pathname === '/api/ping') return sendJson(res, 200, { ok: true }); // keep-alive from open board pages
     if (url.pathname === '/api/config' && req.method === 'GET') return sendJson(res, 200, { ...readConfig(), title: boardTitle(), maxCustomers: MAX_CUSTOMERS, colorChoices: CUSTOMER_COLORS, version: APP_VERSION });
     if (url.pathname === '/api/settings' && req.method === 'POST') {
       if (!/^application\/json\b/i.test(req.headers['content-type'] || '')) { res.writeHead(415); return res.end(); }
@@ -1121,7 +1122,10 @@ function showStartupProblem(text) {
 
 server.listen(PORT, HOST, () => {
   openBrowser(`http://127.0.0.1:${PORT}/`);
+  // Stop after 30 minutes of running time without any request. Open board pages ping every 4 minutes, so this
+  // only happens when no board page is open. The timer does not run while the PC sleeps, so waking up never stops the board.
   setInterval(() => {
-    if (!pending && Date.now() - lastActivity > IDLE_SHUTDOWN_MS) process.exit(0);
+    if (pending) { idleMinutes = 0; return; }
+    if (++idleMinutes >= IDLE_SHUTDOWN_MS / 60000) process.exit(0);
   }, 60000).unref();
 });

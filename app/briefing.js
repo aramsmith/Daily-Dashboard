@@ -135,9 +135,10 @@
     });
   }
 
-  function showError(message, signIn) {
+  function showError(message, signIn, offline) {
     const box = el('div', { class: 'error', role: 'alert' }, el('div', { text: message }));
     if (signIn) box.append(el('a', { class: 'btn primary', href: '/auth/login', text: 'Sign in' }));
+    else if (offline && window.BoardService) box.append(BoardService.startButton(load));
     else box.append(el('button', { type: 'button', class: 'btn', id: 'b-retry', text: 'Try again' }));
     $('b-body').replaceChildren(el('section', { class: 'panel' }, box));
     const r = $('b-retry'); if (r) r.addEventListener('click', load);
@@ -154,7 +155,7 @@
       try {
         r = await fetch(`/api/briefing?id=${encodeURIComponent(id)}`, { headers: { 'X-Board': '1' }, cache: 'no-store' });
       } catch {
-        throw Object.assign(new Error('The board service on this computer is not running. Open the board again from the desktop shortcut.'), { code: 'offline' });
+        throw Object.assign(new Error(window.BoardService ? BoardService.OFFLINE_MESSAGE : 'The board service on this computer has stopped. Open the board again from the desktop shortcut.'), { code: 'offline' });
       }
       const body = await r.json().catch(() => ({}));
       if (!r.ok) throw Object.assign(new Error((body.error && body.error.message) || 'The briefing could not be created. Try again in a moment.'), { code: body.error && body.error.code });
@@ -162,7 +163,7 @@
       render(body);
       setButtons(true);
     } catch (err) {
-      showError(err.message, ['signin_required', 'signin_expired', 'consent_required'].includes(err.code));
+      showError(err.message, ['signin_required', 'signin_expired', 'consent_required'].includes(err.code), err.code === 'offline');
     } finally {
       clearInterval(timer);
     }

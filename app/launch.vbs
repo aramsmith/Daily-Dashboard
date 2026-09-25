@@ -9,4 +9,10 @@ If Not fso.FileExists(node) Then
 End If
 ' Run the engine from the board's own folder, so it never locks the folder it was started from (for example the setup's temp folder).
 sh.CurrentDirectory = dir
-sh.Run """" & node & """ """ & dir & "\server.js""", 0, False
+' "/quiet" (used by the "Start the board" button through the dailyboard:// link) starts the engine without opening a new tab,
+' because the board page that asked for it is already open.
+extra = ""
+If WScript.Arguments.Count > 0 Then
+  If LCase(WScript.Arguments(0)) = "/quiet" Then extra = " --no-open"
+End If
+sh.Run """" & node & """ """ & dir & "\server.js""" & extra, 0, False

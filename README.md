@@ -2,7 +2,7 @@
 
 **Your working day on one screen.** The Daily Board shows the mail that matters, your meetings for today and tomorrow, and it lets Microsoft 365 Copilot prepare you for each meeting. It runs on your own Windows PC and reads Microsoft 365 with your own sign-in. It stores nothing.
 
-**Download:** [DailyBoardSetup-1.1.0.exe](https://github.com/aramsmith/Daily-Dashboard/releases/download/v1.1.0/DailyBoardSetup-1.1.0.exe) (version 1.1.0, 27 MB, Windows 10 and 11) · [what's new](CHANGELOG.md) · [all releases](https://github.com/aramsmith/Daily-Dashboard/releases)
+**Download:** [DailyBoardSetup-1.1.1.exe](https://github.com/aramsmith/Daily-Dashboard/releases/download/v1.1.1/DailyBoardSetup-1.1.1.exe) (version 1.1.1, 27 MB, Windows 10 and 11) · [what's new](CHANGELOG.md) · [all releases](https://github.com/aramsmith/Daily-Dashboard/releases)
 
 ![The Daily Board with sample data](docs/screenshots/board-dark.png)
 
@@ -89,7 +89,7 @@ The board reads your data through **[Microsoft Work IQ](https://learn.microsoft.
 If sign-in says that your account has not allowed the connector, admin consent or the billing assignment is missing. Ask your IT team.
 
 ### Install
-1. Download [DailyBoardSetup-1.1.0.exe](https://github.com/aramsmith/Daily-Dashboard/releases/download/v1.1.0/DailyBoardSetup-1.1.0.exe).
+1. Download [DailyBoardSetup-1.1.1.exe](https://github.com/aramsmith/Daily-Dashboard/releases/download/v1.1.1/DailyBoardSetup-1.1.1.exe).
 2. Double-click it. The setup is not signed yet, so Windows can show "Windows protected your PC". Click **More info**, then **Run anyway**.
 3. Enter your name and 1 to 3 customers, and pick a colour for each customer. Click **Install**.
 
@@ -98,13 +98,13 @@ If sign-in says that your account has not allowed the connector, admin consent o
 4. Click **Start the board**. The board opens in your browser.
 5. Click **Sign in**, and sign in with your Microsoft 365 work account.
 
-A shortcut "*Your name*'s Daily Board" is now on your desktop and in the Start menu. The board stops by itself after 30 minutes without use. Open it again with the shortcut.
+A shortcut "*Your name*'s Daily Board" is now on your desktop and in the Start menu. The board keeps running while one of its pages is open, also in a background tab. When you close all board tabs, it stops by itself after 30 minutes. If a page says the board has stopped, click **Start the board** (the first time, your browser asks whether it may open Daily Board), or use the shortcut.
 
 ### Check the download (optional)
 The SHA-256 checksum of each release is in [release/SHA256SUMS.txt](release/SHA256SUMS.txt). Compare it in PowerShell:
 
 ```powershell
-Get-FileHash .\DailyBoardSetup-1.1.0.exe -Algorithm SHA256
+Get-FileHash .\DailyBoardSetup-1.1.1.exe -Algorithm SHA256
 ```
 
 ### Change your name or customers
@@ -118,12 +118,12 @@ Windows **Settings → Apps → Installed apps → Daily Board → Uninstall**. 
 
 ### Silent install (for IT)
 ```
-DailyBoardSetup-1.1.0.exe /Q /C:"setup.cmd -Quiet -UserName Alex -Customers Contoso,Fabrikam -Colors amber,blue"
+DailyBoardSetup-1.1.1.exe /Q /C:"setup.cmd -Quiet -UserName Alex -Customers Contoso,Fabrikam -Colors amber,blue"
 ```
 
 - Colours are optional: amber, blue, violet, pink, cyan, slate.
 - Exit code 0 means installed. Exit code 2 means the setup stopped; the reason is in `%TEMP%\DailyBoardSetup.log`. The setup checks the input with the same rules as the setup window and never installs different settings.
-- For customer names with spaces, extract first with `DailyBoardSetup-1.1.0.exe /Q /T:C:\Temp\DailyBoard /C`, then run `powershell -ExecutionPolicy Bypass -File C:\Temp\DailyBoard\install.ps1 -Quiet -UserName Alex -Customers "Contoso,Fabrikam Ltd"`.
+- For customer names with spaces, extract first with `DailyBoardSetup-1.1.1.exe /Q /T:C:\Temp\DailyBoard /C`, then run `powershell -ExecutionPolicy Bypass -File C:\Temp\DailyBoard\install.ps1 -Quiet -UserName Alex -Customers "Contoso,Fabrikam Ltd"`.
 
 ---
 

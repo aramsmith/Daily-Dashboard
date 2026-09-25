@@ -56,7 +56,7 @@
     try {
       r = await fetch(path, { headers: { 'X-Board': '1' }, cache: 'no-store' });
     } catch {
-      const e = new Error('The board service on this computer is not running. Open the board again from the desktop shortcut.');
+      const e = new Error(window.BoardService ? BoardService.OFFLINE_MESSAGE : 'The board service on this computer has stopped. Open the board again from the desktop shortcut.');
       e.code = 'offline';
       throw e;
     }
@@ -74,6 +74,7 @@
   function errorBox(err) {
     const box = el('div', { class: 'error', role: 'alert' }, el('div', { text: err.message }));
     if (needsSignIn(err.code)) box.append(el('a', { class: 'btn primary', href: '/auth/login', text: 'Sign in' }));
+    else if (err.code === 'offline' && window.BoardService) box.append(BoardService.startButton(() => refresh()));
     return box;
   }
 
@@ -257,9 +258,10 @@
   function showSignIn(message) {
     $('banner-text').textContent = message;
     $('banner-signin').hidden = false;
+    $('banner-start').replaceChildren();
     $('banner').hidden = false;
   }
-  function hideBanner() { $('banner').hidden = true; }
+  function hideBanner() { $('banner').hidden = true; $('banner-start').replaceChildren(); }
 
   function setUpdated() {
     const t = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -295,6 +297,7 @@
     } catch (err) {
       showSignIn(err.message);
       $('banner-signin').hidden = !needsSignIn(err.code);
+      if (err.code === 'offline' && window.BoardService) $('banner-start').replaceChildren(BoardService.startButton(() => refresh()));
     } finally {
       setUpdated();
       nextRefreshAt = Date.now() + REFRESH_MS;

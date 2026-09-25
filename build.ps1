@@ -13,7 +13,7 @@ if ($Version -notmatch '^\d+\.\d+\.\d+$') { throw "VERSION must look like 1.2.3 
 Write-Output "Building Daily Board $Version"
 
 # Only these app files go into the package, so a stray file (settings, logs, notes) can never slip in.
-$AppFiles = 'server.js', 'app.js', 'briefing.js', 'artifacts.js', 'settings.js', 'index.html', 'briefing.html', 'artifacts.html', 'settings.html',
+$AppFiles = 'server.js', 'app.js', 'briefing.js', 'artifacts.js', 'settings.js', 'keepalive.js', 'index.html', 'briefing.html', 'artifacts.html', 'settings.html',
   'styles.css', 'icon.ico', 'launch.vbs', 'message.vbs', 'windows-zones.json',
   'fonts\JetBrainsMono-Regular.woff2', 'fonts\JetBrainsMono-SemiBold.woff2', 'fonts\JetBrainsMono-Bold.woff2', 'fonts\OFL.txt'
 New-Item -ItemType Directory -Force "$stage\app\fonts" | Out-Null
@@ -36,7 +36,7 @@ if ($sig.Status -ne 'Valid' -or $sig.SignerCertificate.Subject -notlike $NodeSig
 if ((& $nodeExe --version) -ne $NodeVersion) { throw "node.exe is not $NodeVersion." }
 Copy-Item $nodeExe "$stage\runtime\node.exe"
 Copy-Item (Join-Path $nodeDirs[0].FullName 'LICENSE') "$stage\runtime\NODE-LICENSE.txt"
-foreach ($f in 'app\server.js', 'app\app.js', 'app\briefing.js', 'app\artifacts.js', 'app\settings.js') { & "$stage\runtime\node.exe" --check (Join-Path $stage $f); if ($LASTEXITCODE) { throw "Syntax error in $f" } }
+foreach ($f in 'app\server.js', 'app\app.js', 'app\briefing.js', 'app\artifacts.js', 'app\settings.js', 'app\keepalive.js') { & "$stage\runtime\node.exe" --check (Join-Path $stage $f); if ($LASTEXITCODE) { throw "Syntax error in $f" } }
 
 Copy-Item "$b\installer\install.ps1", "$b\installer\uninstall.ps1", "$b\installer\ui.ps1", "$b\installer\setup.cmd" $pkg
 Copy-Item "$b\app\icon.ico" "$pkg\icon.ico"
@@ -55,8 +55,8 @@ $scan = @(Get-ChildItem "$stage\app" -Recurse -File -Include *.js, *.html, *.css
 $hits = foreach ($f in $scan) {
   $rel = $f.FullName.Substring($b.Length + 1)
   if ($rel -eq 'stage\app\fonts\OFL.txt') { continue }   # the font licence names its authors and their e-mail address
-  # Technical Windows names that contain common words (for example the WScript.Shell component) are not data.
-  $text = [IO.File]::ReadAllText($f.FullName) -replace '(?i)WScript\.Shell|Shell\.Application|\$shell\b', ''
+  # Technical Windows names that contain common words (the WScript.Shell component, the registry key \shell\open\command) are not data.
+  $text = [IO.File]::ReadAllText($f.FullName) -replace '(?i)WScript\.Shell|Shell\.Application|\$shell\b|\\shell\\open\\command', ''
   foreach ($pat in $patterns) { foreach ($m in [regex]::Matches($text, $pat, 'IgnoreCase')) { "$rel : '$($m.Value)'" } }
 }
 if (@(Get-ChildItem "$stage\app" -Recurse -File -Filter 'config.json').Count) { $hits = @($hits) + 'a config.json file' }
